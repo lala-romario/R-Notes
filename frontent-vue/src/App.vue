@@ -1,85 +1,45 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <header class="items-center w-full border-b border-neutral-800 py-5 px-5">
+        <nav class="flex">
+            <div class="w-20">
+                <h1 class="text-xl text-gray-400 font-semibold">R-Notes</h1>
+            </div>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+            <div class="flex justify-end pl-2 lg:ml-200 md:ml-100 sm:ml-10">
+                <div class="flex justify-end">
+                    <div class="flex">
+                        <ul class="flex list-none space-x-10 lg:space-x-20">
+                            <li><a @click="toHome()" class="text-xl text-gray-400 hover:text-neutral-600 hover:shadow-lg duration-500 cursor-pointer">Home</a></li>
+                            <li><button @click="toSignup()" class="text-xl text-gray-400 hover:text-neutral-600 hover:shadow-lg duration-500 cursor-pointer">Signup</button></li>
+                            <li><a @click="toSignin()" class="text-xl text-gray-400 hover:text-neutral-600 hover:shadow-lg duration-500 cursor-pointer">Signin</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+    <router-view></router-view>
 
-  <RouterView />
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<script setup>
+import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+
+const icons = [
+    { lable: 'Github', icon: 'github' },
+    { lable: 'linkedin', icon: '' }
+]
+
+const router = useRouter()
+const toHome = () => {
+    router.push('/')
 }
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+const toSignup = () => {
+    router.push('/signup')
 }
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+const toSignin = () => {
+    router.push('/signin')
 }
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+</script>
