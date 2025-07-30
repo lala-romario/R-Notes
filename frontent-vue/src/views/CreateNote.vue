@@ -11,8 +11,8 @@
                     <div class="flex">
                         <a class="flex list-none space-x-10 lg:space-x-20">
                             <p><a @click="toCreateNote()"
-                                    class="text-xl text-gray-400 hover:text-neutral-600 hover:shadow-lg duration-500 cursor-pointer">Create
-                                    note</a>
+                                    class="text-xl text-gray-400 hover:text-neutral-600 hover:shadow-lg duration-500 cursor-pointer">
+                                    Make your note better</a>
                             </p>
                         </a>
                     </div>
@@ -22,16 +22,16 @@
     </header>
 
     <form method="post">
-        <div class="flex justify-center mt-20 ">
+        <div class="flex justify-center mt-15 ">
             <div class="shadow-lg p-6 space-y-10 rounded bg-gray-100">
                 <h1 class="text-neutral-500  text-3xl">Create a new note</h1>
                 <div class="">
                     <label for="title" class="text-gray-500 text-2xl">Title</label>
                     <div>
-                        <input type="text" name="title" id="title" v-model="form.title.$value" placeholder="Title"
+                        <input type="text" name="title" id="title" v-model="schema.title.$value" placeholder="Title"
+                            @focus="titleError = schema.title.$error.message"
                             class="w-140 mt-2 border border-neutral-800 rounded h-12 p-2">
-
-                        <p v-if="form.title.$error" class="mt-2 text-red-600">{{ titleError }}</p>
+                        <p v-if="schema.title.$error" class="mt-2 text-red-600">{{ titleError }}</p>
                     </div>
                 </div>
 
@@ -39,33 +39,43 @@
                     <label for="content" class="text-gray-500 text-2xl">Content</label>
                     <div>
                         <textarea name="content" id="content" placeholder="Type your text here"
-                            v-model="form.content.$value"
+                            v-model="schema.content.$value" @focus="contentError = schema.content.$error.message"
                             class="w-150 mt-2 border border-neutral-800 p-4 h-30 rounded"></textarea>
-                        <p v-if="form.content.$error" class="text-red-600">{{ contentError }}</p>
+                        <p v-if="schema.content.$error" class="text-red-600">{{ contentError }}</p>
                     </div>
                 </div>
 
-                <div>
-                    <label for="image">Upload image</label>
-                    <div>
-                        <field type="file" name="image" />
-                    </div>
-                </div>
+                <!-- upload image section-->
+                <div class="flex items-center justify-center w-full">
+                    <label for="file"
+                        class="flex flex-col items-center justify-center w-full h-30 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer  hover:bg-neutral-50 hover:bg-gray-100 duration-500 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-neutral-300">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                            </svg>
 
-                <div>
-                    <label for="video">Upload video</label>
-                    <div>
-                        <input type="file" name="video" id="video">
-                    </div>
+                            <p class="mb-2 text-sm dark:text-neutral-400"><span
+                                    class="font-semibold text-neutral-400">Click
+                                    to upload a file</span> or drag and drop</p>
+                            <p class="text-neutral-500">{{ fileName ?? type }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                            </p>
+                        </div>
+                        <input id="file" type="file" name="file" class="hidden" @change="handleChange" />
+                    </label>
                 </div>
 
                 <!-- <div>
-                <ul class="loader-circle">
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                </ul>
-            </div> -->
+                        <ul class="loader-circle">
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                      </div> 
+                    -->
                 <button type="submit" @click.prevent="storeNote()"
                     class="text-white text-xl px-10 py-2 bg-blue-500 shadow-lg shadow-blue-500/50 rounded">Save</button>
 
@@ -79,39 +89,39 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 import axios from 'axios';
 import * as yup from "yup";
 import Camera from "simple-vue-camera";
 import { defineForm, field } from 'vue-yup-form';
 import router from '@/router';
 
-const route = useRouter();
-const titleError = ref('');
-const contentError = ref('');
-const note = ref('');
+const type = 'SVG, PNG, JPG or GIF (MAX. 800x400px)'
+const fileName = ref('')
+const titleError = ref('')
+const contentError = ref('')
 
-const form = defineForm({
-    title: field("", yup.string().required()),
-    content: field("", yup.string().required()),
-    image: field("", yup.file),
-    video: field("", yup.file)
+const schema = defineForm({
+    title: field("", yup.string().required('The title field is required')),
+    content: field("", yup.string().required('The content field is required'))
 })
+
+const handleChange = () => {
+    const file = event.target.files[0]
+    fileName.value = file.name
+    console.log(fileName)
+}
 
 const storeNote = async () => {
     try {
         const response = await axios.post('http://localhost:8000/api/create/note', {
-            title: form.title.$value,
-            content: form.content.$value,
+            title: schema.title.$value,
+            content: schema.content.$value,
         })
-
-        console.log(response.data.success)
-        console.log(form.image);
-        console.log(response.data.note);
+        router.push('/dashboard')
     } catch (error) {
         console.log(error);
-        titleError.value = error.response.data.errors.title[0];
-        contentError.value = error.response.data.errors.content[0];
+        titleError.value = error.response.data.errors.title ? error.response.data.errors.title[0] : '';
+        contentError.value = error.response.data.errors.content ? error.response.data.errors.content[0] : '';
     }
 }
 
