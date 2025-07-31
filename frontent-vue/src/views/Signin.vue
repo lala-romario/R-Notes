@@ -1,5 +1,5 @@
 <template>
-    <header class="items-center w-full border-b border-neutral-800 py-5 px-5">
+    <header class="items-center w-full bg-teal-800 py-5 px-5">
         <nav class="flex">
             <div class="w-20">
                 <h1 class="text-xl text-gray-400 font-semibold">R-Notes</h1>
@@ -10,13 +10,13 @@
                     <div class="flex">
                         <ul class="flex list-none space-x-10 lg:space-x-20">
                             <li><a @click="toHome()"
-                                    class="text-xl text-gray-400 hover:text-neutral-600 hover:shadow-lg duration-500 cursor-pointer">Home</a>
+                                    class="text-xl text-white hover:text-neutral-600 duration-500 cursor-pointer">Home</a>
                             </li>
                             <li><button @click="toSignup()"
-                                    class="text-xl text-gray-400 hover:text-neutral-600 hover:shadow-lg duration-500 cursor-pointer">Signup</button>
+                                    class="text-xl text-white hover:text-neutral-600 duration-500 cursor-pointer">Signup</button>
                             </li>
                             <li><a @click="toSignin()"
-                                    class="text-xl text-gray-400 hover:text-neutral-600 hover:shadow-lg duration-500 cursor-pointer">Signin</a>
+                                    class="text-xl text-white hover:text-neutral-600 duration-500 cursor-pointer">Signin</a>
                             </li>
                         </ul>
                     </div>

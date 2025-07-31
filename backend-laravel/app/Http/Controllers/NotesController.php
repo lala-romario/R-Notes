@@ -12,16 +12,23 @@ class NotesController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'title' => 'required',
             'content' => 'required'
-        ]);
+        ];
+
+        if ($request->hasFile('file')) {
+            $rules['file'] = 'mimes:jpg,png,mp4,webm|max:2048';
+            $path = $request->file('file')->store('files', 'public');
+        }
+        $validated = $request->validate($rules);
+        $validated['file'] = $path;
 
         $note = Note::create($validated);
-        
+
         return [
             'success' => 'its work',
-            'note' => new NoteResource($note)
+            'filename' => new NoteResource($note)
         ];
     }
 }

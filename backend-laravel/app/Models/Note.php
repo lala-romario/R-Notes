@@ -9,7 +9,6 @@ class Note extends Model
     protected $fillable = [ 
         'title', 
         'content', 
-        'image', 
-        'video'
+        'file'
     ];
 }
