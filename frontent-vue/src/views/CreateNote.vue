@@ -80,15 +80,40 @@
                 <button type="submit" @click.prevent="storeNote()"
                     class="text-white text-xl px-10 py-2 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">Save</button>
 
-                <button 
-                    class="text-white text-xl ml-2 px-7 py-2 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">start
-                    camera</button>
+                <button @click.prevent="toggleStream()"
+                    class="text-white text-xl ml-2 px-7 py-2 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">
+                    {{ isStreaming ? 'Stop' : 'Start' }} camera</button>
             </div>
         </div>
     </form>
+
+
+
+
+
+    <!-- La camera -->
+    <div class="flex flex-col gap-4 text-center">
+        <div>
+            <button @click="toggleStream()">
+                {{ isStreaming ? 'Stop' : 'Start' }}
+            </button>
+        </div>
+
+        <div>
+            <div v-for="camera in cameras" :key="camera.deviceId" class="px-2 py-1 cursor-pointer"
+                :class="{ 'text-primary': currentCamera === camera.deviceId }" @click="changeCamera(camera.deviceId)">
+                {{ camera.label || 'Camera inconnue' }}
+            </div>
+        </div>
+
+        <div class="flex justify-center">
+            <video ref="videoRef" autoplay muted playsinline class="h-100 w-auto" />
+        </div>
+    </div>
 </template>
 
 <script setup>
+import { onMounted, watch } from 'vue'
 import { useDevicesList, useUserMedia } from '@vueuse/core'
 import { reactive, shallowRef, useTemplateRef, watchEffect } from 'vue'
 import { ref } from 'vue';
@@ -134,6 +159,65 @@ const storeNote = async () => {
 const toCreateNote = () => {
     router.push('/create/note')
 }
+
+
+//Les script de la camera
+const cameras = ref([])
+const currentCamera = ref(null)
+const videoRef = ref(null)
+const stream = ref(null)
+const isStreaming = ref(false)
+
+async function getCameras() {
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    cameras.value = devices.filter(device => device.kind === 'videoinput')
+
+    if (!currentCamera.value && cameras.value.length > 0) {
+        currentCamera.value = cameras.value[0].deviceId
+    }
+}
+
+async function startStream() {
+    stopStream() // stop old stream if any
+
+    stream.value = await navigator.mediaDevices.getUserMedia({
+        video: { deviceId: { exact: currentCamera.value } },
+    })
+
+    if (videoRef.value) {
+        videoRef.value.srcObject = stream.value
+    }
+
+    isStreaming.value = true
+}
+
+function stopStream() {
+    if (stream.value) {
+        stream.value.getTracks().forEach(track => track.stop())
+        stream.value = null
+    }
+
+    isStreaming.value = false
+}
+
+function toggleStream() {
+    if (isStreaming.value) {
+        stopStream()
+    } else {
+        startStream()
+    }
+}
+
+function changeCamera(deviceId) {
+    currentCamera.value = deviceId
+    if (isStreaming.value) {
+        startStream()
+    }
+}
+
+onMounted(async () => {
+    await getCameras()
+})
 </script>
 
 <style scoped>
