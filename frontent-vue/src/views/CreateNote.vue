@@ -3,7 +3,7 @@
     <header class="items-center w-full bg-teal-800 py-5 px-5">
         <nav class="flex">
             <div class="w-20">
-                <h1 class="text-xl text-gray-400 font-semibold">R-Notes</h1>
+                <h1 class="text-xl text-cyan-200 font-semibold">R-Notes</h1>
             </div>
 
             <div class="flex justify-end pl-2 lg:ml-200 md:ml-100 sm:ml-10">
@@ -21,8 +21,8 @@
         </nav>
     </header>
 
-    <form method="post">
-        <div class="flex justify-center mt-15 ">
+    <div class="mb-10">
+        <div class=" flex justify-center mt-15 ">
             <div class="shadow-lg p-6 space-y-10 rounded bg-gray-100">
                 <h1 class="text-neutral-600  text-3xl">Create a new note</h1>
                 <div class="">
@@ -77,56 +77,50 @@
                         </ul>
                       </div> 
                     -->
-                <button type="submit" @click.prevent="storeNote()"
-                    class="text-white text-xl px-10 py-2 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">Save</button>
-
-                <button @click.prevent="toggleStream()"
-                    class="text-white text-xl ml-2 px-7 py-2 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">
-                    {{ isStreaming ? 'Stop' : 'Start' }} camera</button>
+                <div class="flex gap-70">
+                    <div>
+                        <button type="submit" @click.prevent="storeNote()"
+                            class="text-white text-xl px-10 py-2 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">Save</button>
+                    </div>
+                    <div class="ml-4">
+                        <CreateVideo ref="videoComponent" />
+                    </div>
+                </div>
             </div>
-        </div>
-    </form>
-
-
-
-
-
-    <!-- La camera -->
-    <div class="flex flex-col gap-4 text-center">
-        <div>
-            <button @click="toggleStream()">
-                {{ isStreaming ? 'Stop' : 'Start' }}
-            </button>
-        </div>
-
-        <div>
-            <div v-for="camera in cameras" :key="camera.deviceId" class="px-2 py-1 cursor-pointer"
-                :class="{ 'text-primary': currentCamera === camera.deviceId }" @click="changeCamera(camera.deviceId)">
-                {{ camera.label || 'Camera inconnue' }}
-            </div>
-        </div>
-
-        <div class="flex justify-center">
-            <video ref="videoRef" autoplay muted playsinline class="h-100 w-auto" />
         </div>
     </div>
+    <!-- <div v-if="videoComponent" >
+        <p @change="haveURL()">its prise en charge {{ videoComponent.enabled }}, {{ url = videoComponent.videoURL }}</p>
+    </div> -->
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
-import { useDevicesList, useUserMedia } from '@vueuse/core'
-import { reactive, shallowRef, useTemplateRef, watchEffect } from 'vue'
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import axios from 'axios';
 import * as yup from "yup";
-import Camera from "simple-vue-camera";
 import { defineForm, field } from 'vue-yup-form';
 import router from '@/router';
+import CreateVideo from '@/views/CreateVideo.vue';
+
 
 const fileError = ref('')
 const titleError = ref('')
 const contentError = ref('')
 const selectedFile = ref(null)
+const videoComponent = ref(null)
+const videoRecorded = ref(null)
+
+
+//watch the videoComponent to set the value of url
+watch(
+    () => videoComponent.value?.videoURL,
+    (newURL) => {
+        if (newURL) {
+            videoRecorded.value = videoComponent.value?.videoFile
+            //console.log(videoRecorded.value)
+        }
+    }
+)
 
 const schema = defineForm({
     title: field("", yup.string().required('The title field is required')),
@@ -143,11 +137,13 @@ const storeNote = async () => {
     formData.append('title', schema.title.$value)
     formData.append('content', schema.content.$value)
     formData.append('file', selectedFile.value)
+    formData.append('recordedVideo', videoRecorded.value)
+    console.log(videoRecorded)
 
     try {
         const response = await axios.post('http://localhost:8000/api/create/note', formData)
-        router.push('/dashboard')
         console.log(response.data.filename)
+        router.push('/dashboard')
     } catch (error) {
         console.log(error);
         titleError.value = error.response.data.errors.title ? error.response.data.errors.title[0] : '';
@@ -159,65 +155,6 @@ const storeNote = async () => {
 const toCreateNote = () => {
     router.push('/create/note')
 }
-
-
-//Les script de la camera
-const cameras = ref([])
-const currentCamera = ref(null)
-const videoRef = ref(null)
-const stream = ref(null)
-const isStreaming = ref(false)
-
-async function getCameras() {
-    const devices = await navigator.mediaDevices.enumerateDevices()
-    cameras.value = devices.filter(device => device.kind === 'videoinput')
-
-    if (!currentCamera.value && cameras.value.length > 0) {
-        currentCamera.value = cameras.value[0].deviceId
-    }
-}
-
-async function startStream() {
-    stopStream() // stop old stream if any
-
-    stream.value = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: { exact: currentCamera.value } },
-    })
-
-    if (videoRef.value) {
-        videoRef.value.srcObject = stream.value
-    }
-
-    isStreaming.value = true
-}
-
-function stopStream() {
-    if (stream.value) {
-        stream.value.getTracks().forEach(track => track.stop())
-        stream.value = null
-    }
-
-    isStreaming.value = false
-}
-
-function toggleStream() {
-    if (isStreaming.value) {
-        stopStream()
-    } else {
-        startStream()
-    }
-}
-
-function changeCamera(deviceId) {
-    currentCamera.value = deviceId
-    if (isStreaming.value) {
-        startStream()
-    }
-}
-
-onMounted(async () => {
-    await getCameras()
-})
 </script>
 
 <style scoped>

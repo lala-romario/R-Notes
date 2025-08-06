@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('content');
-            $table->string('file')->nullable();
+            $table->string('file_URL')->nullable();
+            $table->string('originalFileName')->nullable();
+            $table->string('video')->nullable();
             $table->timestamps();
         });
     }

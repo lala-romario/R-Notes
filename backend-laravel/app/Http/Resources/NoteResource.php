@@ -17,8 +17,9 @@ class NoteResource extends JsonResource
         return [
             'title' => $this->title,
             'content' => $this->content,
-            'image' => $this->image,
+            'file_URL' => $this->file_URL,
             'video' => $this->video,
+            'originalFileName' => $this->originalFileName,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

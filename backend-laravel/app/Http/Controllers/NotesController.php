@@ -8,7 +8,12 @@ use Illuminate\Http\Request;
 
 class NotesController extends Controller
 {
-    public function index() {}
+    public function index()
+    {
+        $note = Note::all();
+
+        return $note;
+    }
 
     public function store(Request $request)
     {
@@ -19,10 +24,25 @@ class NotesController extends Controller
 
         if ($request->hasFile('file')) {
             $rules['file'] = 'mimes:jpg,png,mp4,webm|max:2048';
-            $path = $request->file('file')->store('files', 'public');
+            $path_file = $request->file('file')->store('files', 'public');
+            $originalFileName = $request->file('file')->getClientOriginalName();
         }
+
+        if ($request->hasFile('recordedVideo')) {
+            $rules['video'] = 'mimes:webm|max:10248';
+            $path_video = $request->file('recordedVideo')->store('video', 'public');
+        }
+
         $validated = $request->validate($rules);
-        $validated['file'] = $path;
+
+        if ($request->hasFile('file')) {
+            $validated['file_URL'] = asset('storage/' . $path_file);
+            $validated['originalFileName'] = $originalFileName;
+        }
+
+        if ($request->hasFile('recordedVideo')) {
+            $validated['video'] = asset('storage/' . $path_video);
+        }
 
         $note = Note::create($validated);
 

@@ -3,7 +3,7 @@
     <header class="items-center w-full bg-teal-800 py-5 px-5">
         <nav class="flex">
             <div class="w-20">
-                <h1 class="text-xl text-gray-400 font-semibold">R-Notes</h1>
+                <h1 class="text-xl text-cyan-200 font-semibold">R-Notes</h1>
             </div>
 
             <div class="flex justify-end pl-2 lg:ml-200 md:ml-100 sm:ml-10">
@@ -50,7 +50,7 @@
                         <p v-if="schema.email.$error" class="text-red-500 mt-2">{{ emailError }}</p>
                     </div>
                     <div>
-                        <label for="password" class="text-neutral-300 text-2xl">Password</label>
+                        <label for="password" class="text-neutral-600 text-2xl">Password</label>
                         <div class="mt-2">
                             <input type="password" name="password" id="password" v-model="schema.password.$value" @focus="passwordError = schema.password.$error.message"
                               placeholder="Password"  class="border border-neutral-800 rounded w-full h-12 p-2 rounded pl-2 ">
