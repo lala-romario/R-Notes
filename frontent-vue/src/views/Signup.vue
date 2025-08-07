@@ -36,26 +36,30 @@
                     <div>
                         <label for="name" class="text-gray-600 text-2xl">Name</label>
                         <div class="mt-2">
-                            <input type="text" name="name" id="name" v-model="schema.name.$value" @focus="nameError = schema.name.$error.message"
-                               placeholder="Name" class="border border-neutral-800 rounded w-100 h-12 rounded pl-2 ">
+                            <input type="text" name="name" id="name" v-model="schema.name.$value"
+                                @focus="nameError = schema.name.$error.message" placeholder="Name"
+                                class="border border-neutral-800 rounded w-100 h-12 rounded pl-2 ">
                         </div>
                         <p v-if="schema.name.$error" class="text-red-500 mt-2">{{ nameError }}</p>
                     </div>
                     <div>
                         <label for="email" class="text-gray-600 text-2xl">Email</label>
                         <div class="mt-2">
-                            <input type="email" name="email" id="email" v-model="schema.email.$value" @focus="emailError = schema.email.$error.message"
-                              placeholder="Email"  class="border border-neutral-800 rounded w-full h-12 p-2 rounded pl-2 ">
+                            <input type="email" name="email" id="email" v-model="schema.email.$value"
+                                @focus="emailError = schema.email.$error.message" placeholder="Email"
+                                class="border border-neutral-800 rounded w-full h-12 p-2 rounded pl-2 ">
                         </div>
                         <p v-if="schema.email.$error" class="text-red-500 mt-2">{{ emailError }}</p>
                     </div>
                     <div>
                         <label for="password" class="text-neutral-600 text-2xl">Password</label>
                         <div class="mt-2">
-                            <input type="password" name="password" id="password" v-model="schema.password.$value" @focus="passwordError = schema.password.$error.message"
-                              placeholder="Password"  class="border border-neutral-800 rounded w-full h-12 p-2 rounded pl-2 ">
+                            <input type="password" name="password" id="password" v-model="schema.password.$value"
+                                @focus="passwordError = schema.password.$error.message" placeholder="Password"
+                                class="border border-neutral-800 rounded w-full h-12 p-2 rounded pl-2 ">
                         </div>
                         <p v-if="schema.password.$error" class="text-red-500 mt-2">{{ passwordError }}</p>
+                        <p v-else class="text-red-500 mt-2">{{ showPasswordError }}</p>
                     </div>
                 </div>
                 <button @click.prevent="sendForm"
@@ -63,6 +67,8 @@
             </div>
         </div>
     </div>
+
+    <p>{{ device }}</p>
 </template>
 
 <script setup>
@@ -73,13 +79,15 @@ import { useRouter } from 'vue-router'
 import { defineForm, field } from 'vue-yup-form';
 
 
+const device = ref('')
 const nameError = ref('')
 const emailError = ref('')
 const passwordError = ref('')
+const showPasswordError = ref('')
 const schema = defineForm({
     name: field("", yup.string().required('The name field is required')),
-    email: field("", yup.string().required('The email field is required')),
-    password: field("", yup.string().required('The password is required').min(12))
+    email: field("", yup.string().required('The email field is required').email('The email must be valid')),
+    password: field("", yup.string().required('The password field is required'))
 });
 
 const sendForm = async () => {
@@ -87,14 +95,17 @@ const sendForm = async () => {
     formData.append('name', schema.name.$value)
     formData.append('email', schema.email.$value)
     formData.append('password', schema.password.$value)
+
     try {
-        const response = await axios.post('http://localhost:8000/api/create', formData);
-        console.log(message)
+        const response = await axios.post('http://localhost:8000/api/signup', formData);
+        console.log(response.data)
+        device.value = response.data.device
     } catch (error) {
         console.log(error)
         nameError.value = error.response.data.errors.name ? error.response.data.errors.name[0] : '';
-        emailErrorError.value = error.response.data.errors.email ? error.response.data.errors.email[0] : '';
+        emailError.value = error.response.data.errors.email ? error.response.data.errors.email[0] : '';
         passwordError.value = error.response.data.errors.password ? error.response.data.errors.password[0] : '';
+        showPasswordError.value = error.response.data.errors.password ? error.response.data.errors.password[0] : ''
 
     }
 }

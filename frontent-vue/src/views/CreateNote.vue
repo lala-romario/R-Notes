@@ -142,7 +142,7 @@ const storeNote = async () => {
 
     try {
         const response = await axios.post('http://localhost:8000/api/create/note', formData)
-        console.log(response.data.filename)
+        //console.log(response.data)
         router.push('/dashboard')
     } catch (error) {
         console.log(error);
