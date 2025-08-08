@@ -6,15 +6,21 @@
                 <h1 class="text-xl text-cyan-200 font-semibold">R-Notes</h1>
             </div>
 
-            <div class="flex justify-end pl-2 lg:ml-200 md:ml-100 sm:ml-10">
-                <div class="flex justify-end">
+            <div class="flex pl-2 lg:ml-200 md:ml-100 sm:ml-10">
+                <div class="flex">
                     <div class="flex">
                         <a class="flex list-none space-x-10 lg:space-x-20">
-                            <p><a @click="toCreateNote()"
+                            <p><a @click="toDashboard()"
                                     class="text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">
-                                    Make your note better</a>
+                                    Dashboard</a>
                             </p>
                         </a>
+                    </div>
+                </div>
+                <div class="lg:ml-140">
+                    <div class="">
+                        <a class="text-white text-xl items-center hover:text-neutral-500 duration-500 cursor-pointer">Log
+                            out</a>
                     </div>
                 </div>
             </div>
@@ -110,6 +116,9 @@ const selectedFile = ref(null)
 const videoComponent = ref(null)
 const videoRecorded = ref(null)
 
+const toDashboard = () => {
+    router.push('/dashboard')
+}
 
 //watch the videoComponent to set the value of url
 watch(
@@ -141,8 +150,15 @@ const storeNote = async () => {
     console.log(videoRecorded)
 
     try {
-        const response = await axios.post('http://localhost:8000/api/create/note', formData)
-        //console.log(response.data)
+        const response = await axios.post('http://localhost:8000/api/create/note',
+            formData,
+            {
+                headers: {
+                    Authorization: `${localStorage.getItem('token')}`
+                }
+            }
+        )
+        console.log(response.data)
         router.push('/dashboard')
     } catch (error) {
         console.log(error);
@@ -150,10 +166,6 @@ const storeNote = async () => {
         contentError.value = error.response.data.errors.content ? error.response.data.errors.content[0] : '';
         fileError.value = error.response.data.errors.file ? error.response.data.errors.file[0] : ''
     }
-}
-
-const toCreateNote = () => {
-    router.push('/create/note')
 }
 </script>
 

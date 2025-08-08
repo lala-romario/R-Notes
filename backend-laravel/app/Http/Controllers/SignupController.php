@@ -19,9 +19,11 @@ class SignupController extends Controller
 
         $validated = $request->validate($rules);
 
-        $user = User::create($validated);
-
         $token = str()->random(50);
+
+        $validated['token'] = $token;
+        
+        $user = User::create($validated);
 
         return [
             'message' => 'already created with successfull',

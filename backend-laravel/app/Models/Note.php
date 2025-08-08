@@ -11,6 +11,12 @@ class Note extends Model
         'content', 
         'file_URL',
         'originalFileName',
-        'video'
+        'video',
+        'user_id'
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+    
 }

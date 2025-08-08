@@ -5,8 +5,8 @@
                 <h1 class="text-xl text-cyan-200 font-semibold">R-Notes</h1>
             </div>
 
-            <div class="flex justify-end pl-2 lg:ml-200 md:ml-100 sm:ml-10">
-                <div class="flex justify-end">
+            <div class="flex pl-2 lg:ml-200 md:ml-100 sm:ml-10">
+                <div class="flex">
                     <div class="flex">
                         <ul class="flex list-none space-x-10 lg:space-x-20">
                             <li><a @click="toCreateNote()"
@@ -14,6 +14,11 @@
                                     note</a>
                             </li>
                         </ul>
+                    </div>
+                </div>
+                <div class="flex lg:ml-150">
+                    <div class="flex">
+                        <a class="text-white text-xl hover:text-neutral-500 duration-500 cursor-pointer">Log out</a>
                     </div>
                 </div>
             </div>
@@ -30,7 +35,7 @@
                 <p class="text-gray-700 mt-2 line-clamp-3">{{ note.content }}</p>
 
                 <div v-if="note.file_URL">
-                    <img :src="note.file_URL" alt="" class="object-cover h-48 w-96 rounded">
+                    <img :src="note.file_URL" alt="" class="object-none h-48 w-auto rounded">
                 </div>
 
                 <!--<div v-if="note.video" class="mt-2">
@@ -42,6 +47,7 @@
             </div>
         </div>
     </div>
+    <p>{{ token }}</p>
 </template>
 
 <script setup>
@@ -51,13 +57,19 @@ import { useRouter } from 'vue-router';
 import { useDateFormat } from '@vueuse/core';
 
 
+const token = localStorage.getItem('token')
 const notes = ref(null)
 //get all notes from endpoint
 {
-    axios.get('http://localhost:8000/api/dashboard')
+    axios.get('http://localhost:8000/api/dashboard',
+        {
+            headers: {
+                Authorization: `${localStorage.getItem('token')}`
+            }
+        })
         .then(response => {
-            notes.value = response.data
-
+            notes.value = response.data.notes
+            console.log(response.data)
         })
         .catch(error => console.log('error'))
 }

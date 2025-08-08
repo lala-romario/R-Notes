@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Jenssegers\Agent\Agent as AgentAgent;
 use Jenssegers\Agent\Facades\Agent;
 
-Route::post('/signup', [SignupController::class, 'store'])->name('store.user');
+Route::post('/signup', [SignupController::class, 'store']);
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 

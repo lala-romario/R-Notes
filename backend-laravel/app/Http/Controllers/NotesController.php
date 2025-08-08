@@ -5,18 +5,41 @@ namespace App\Http\Controllers;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class NotesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $note = Note::all();
+        //$id = $request->user()->note;
+        $userToken = $request->header('Authorization');
 
-        return $note;
+        $user = DB::table('users')->where('token', $userToken)->first();
+
+        if (! $user) {
+            return [
+                'error' => 'errror'
+            ];
+        }
+
+        $notes = DB::table('notes')->where('user_id', $user->id)->get();
+
+        return [
+            'notes' => $notes
+        ];
     }
 
     public function store(Request $request)
     {
+        $userToken = $request->header('Authorization');
+
+        $user = DB::table('users')->where('token', $userToken)->first();
+
+        if (! $user) {
+            return [
+                'error' => 'you are not an user'
+            ];
+        }
         $rules = [
             'title' => 'required',
             'content' => 'required'
@@ -44,11 +67,14 @@ class NotesController extends Controller
             $validated['video'] = asset('storage/' . $path_video);
         }
 
+        $validated['user_id'] = $user->id;
+
         $note = Note::create($validated);
 
         return [
             'success' => 'its work',
-            'filename' => new NoteResource($note)
+            'filename' => new NoteResource($note),
+            'user' => $user,
         ];
     }
 }

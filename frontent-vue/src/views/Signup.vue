@@ -69,6 +69,7 @@
     </div>
 
     <p>{{ device }}</p>
+    <p>{{ token }}</p>
 </template>
 
 <script setup>
@@ -79,6 +80,7 @@ import { useRouter } from 'vue-router'
 import { defineForm, field } from 'vue-yup-form';
 
 
+const token = ref('')
 const device = ref('')
 const nameError = ref('')
 const emailError = ref('')
@@ -100,6 +102,9 @@ const sendForm = async () => {
         const response = await axios.post('http://localhost:8000/api/signup', formData);
         console.log(response.data)
         device.value = response.data.device
+        localStorage.setItem('token', response.data.token)
+        token.value = localStorage.getItem('token')
+        router.push('/dashboard')
     } catch (error) {
         console.log(error)
         nameError.value = error.response.data.errors.name ? error.response.data.errors.name[0] : '';
