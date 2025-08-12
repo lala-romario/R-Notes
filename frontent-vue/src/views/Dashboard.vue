@@ -18,7 +18,8 @@
                 </div>
                 <div class="flex lg:ml-150">
                     <div class="flex">
-                        <a class="text-white text-xl hover:text-neutral-500 duration-500 cursor-pointer">Log out</a>
+                        <a @click="logout()"
+                            class="text-white text-xl hover:text-neutral-500 duration-500 cursor-pointer">Log out</a>
                     </div>
                 </div>
             </div>
@@ -31,6 +32,7 @@
         <div v-if="notes" class="grid gap-4">
             <div v-for="note in notes" :key="note.id"
                 class="p-4 border border-gray-200 rounded-lg shadow hover:shadow-lg transition duration-600">
+                <h1 class="text-xl text-neutral-500 font-bold">{{ user.name }}</h1>
                 <h2 class="text-xl font-semibold text-teal-600">{{ note.title }}</h2>
                 <p class="text-gray-700 mt-2 line-clamp-3">{{ note.content }}</p>
 
@@ -59,6 +61,17 @@ import { useDateFormat } from '@vueuse/core';
 
 const token = localStorage.getItem('token')
 const notes = ref(null)
+const user = ref('')
+const code = ref()
+
+const router = useRouter();
+
+const toCreateNote = () => {
+    if (localStorage.getItem('token') != '') {
+        router.push('/create/note');
+    }
+}
+
 //get all notes from endpoint
 {
     axios.get('http://localhost:8000/api/dashboard',
@@ -69,16 +82,34 @@ const notes = ref(null)
         })
         .then(response => {
             notes.value = response.data.notes
-            console.log(response.data)
+            user.value = response.data.user
+            code.value = response.data.code
+
+            if (!(code.value === 200)) {
+                router.push('/')
+            }
+            console.log(code.value)
         })
         .catch(error => console.log('error'))
+
+
 }
 
+const logout = async () => {
+    try {
+        const response = await axios.get('http://localhost:8000/api/logout',
+            {
+                headers: {
+                    Authorization: `${localStorage.getItem('token')}`
+                }
+            }
+        )
 
-
-const router = useRouter();
-
-const toCreateNote = () => {
-    router.push('/create/note');
+        if (response.data.code === 200) {
+            router.push('/')
+        }
+    } catch (error) {
+        console.log(error)
+    }
 }
 </script>

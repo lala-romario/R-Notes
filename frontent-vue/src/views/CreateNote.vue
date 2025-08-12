@@ -109,6 +109,7 @@ import router from '@/router';
 import CreateVideo from '@/views/CreateVideo.vue';
 
 
+const code = ref()
 const fileError = ref('')
 const titleError = ref('')
 const contentError = ref('')
@@ -141,6 +142,23 @@ const handleChange = (event) => {
     selectedFile.value = file
 }
 
+{
+    axios.get('http://localhost:8000/api/dashboard',
+        {
+            headers: {
+                Authorization: `${localStorage.getItem('token')}`
+            }
+        })
+        .then(response => { 
+            code.value = response.data.code
+        
+            if(!(code.value === 200)){
+                router.push('/')
+            }
+        })
+        .catch(error => console.log('error from create note'))
+}
+
 const storeNote = async () => {
     const formData = new FormData();
     formData.append('title', schema.title.$value)
@@ -158,6 +176,10 @@ const storeNote = async () => {
                 }
             }
         )
+
+        if (response.data.code !== 200) {
+            router.push('/')
+        }
         console.log(response.data)
         router.push('/dashboard')
     } catch (error) {

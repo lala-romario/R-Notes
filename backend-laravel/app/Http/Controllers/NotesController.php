@@ -18,14 +18,17 @@ class NotesController extends Controller
 
         if (! $user) {
             return [
-                'error' => 'errror'
+                'error' => 'errror',
+                'code' => 402
             ];
         }
 
         $notes = DB::table('notes')->where('user_id', $user->id)->get();
 
         return [
-            'notes' => $notes
+            'notes' => $notes,
+            'user' => $user,
+            'code' => 200
         ];
     }
 
@@ -37,7 +40,8 @@ class NotesController extends Controller
 
         if (! $user) {
             return [
-                'error' => 'you are not an user'
+                'error' => 'you are not an user',
+                'code' => 402
             ];
         }
         $rules = [

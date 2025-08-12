@@ -26,7 +26,7 @@ class SignupController extends Controller
         $user = User::create($validated);
 
         return [
-            'message' => 'already created with successfull',
+            'code' => 200,
             'user' => new UserResource($user),
             'token' => $token,
             'device' => Agent::platform()

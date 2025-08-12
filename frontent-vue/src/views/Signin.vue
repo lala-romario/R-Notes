@@ -51,8 +51,9 @@
                         <p v-if="schema.password.$error" class="text-red-500 mt-2">{{ passwordError }}</p>
                     </div>
                 </div>
-                <button @click.prevent="sendForm"
-                    class="mt-4 text-white text-xl px-10 py-2 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">Signup</button>
+                <p v-if="credentialsError" class="mt-2 text-red-500">{{ credentialsError }}</p>
+                <button @click.prevent="signin()"
+                    class="mt-4 text-white text-xl px-10 py-2 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">Sign in</button>
             </div>
         </div>
     </div>
@@ -63,8 +64,10 @@ import { ref } from 'vue'
 import * as yup from "yup";
 import { useRouter } from 'vue-router'
 import { defineForm, field } from 'vue-yup-form';
+import axios from 'axios';
 
 
+const credentialsError = ref('')
 const emailError = ref('')
 const passwordError = ref('')
 const schema = defineForm({
@@ -72,17 +75,24 @@ const schema = defineForm({
     password: field("", yup.string().required('The password is required').min(12))
 });
 
-const sendForm = async () => {
+const signin = async () => {
     const formData = new FormData()
     formData.append('email', schema.email.$value)
     formData.append('password', schema.password.$value)
     try {
-        const response = await axios.post('http://localhost:8000/api/create', formData);
-        console.log(message)
+        const response = await axios.post('http://localhost:8000/api/login', formData);
+        console.log(response.data)
+        if(response.data.code === 401) {
+            credentialsError.value = response.data.error
+        }
+
+        if(response.data.code === 200) {
+            localStorage.setItem('token', response.data.token)
+            router.push('/dashboard')
+        }
     } catch (error) {
         console.log(error)
-        nameError.value = error.response.data.errors.name ? error.response.data.errors.name[0] : '';
-        emailErrorError.value = error.response.data.errors.email ? error.response.data.errors.email[0] : '';
+        emailError.value = error.response.data.errors.email ? error.response.data.errors.email[0] : '';
         passwordError.value = error.response.data.errors.password ? error.response.data.errors.password[0] : '';
 
     }
