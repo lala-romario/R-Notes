@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Homeview from '../views/Homeview.vue'
 import Signup from '@/views/Signup.vue'
 import Signin from '@/views/Signin.vue'
-import NotesCreate from '@/views/CreateNote.vue'
 import CreateNote from '@/views/CreateNote.vue'
 import Dashboard from '@/views/Dashboard.vue'
 
@@ -32,7 +31,7 @@ const router = createRouter({
     },
     {
       path: '/create/note',
-      name: 'createNotes',
+      name: 'createNote',
       component: CreateNote
     },
     {

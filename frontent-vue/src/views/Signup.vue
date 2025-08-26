@@ -1,72 +1,78 @@
 <template>
 
     <header class="items-center w-full bg-teal-800 py-5 px-5">
-        <nav class="flex">
-            <div class="w-20">
-                <h1 class="text-xl text-cyan-200 font-semibold">R-Notes</h1>
+        <nav class="flex flex-wrap items-center justify-between">
+            <!-- Logo -->
+            <div class="w-auto animate-pulse mb-4 lg:mb-0">
+                <h1 class="text-xl sm:text-2xl text-cyan-200 font-semibold">R-Notes</h1>
             </div>
 
-            <div class="flex justify-end pl-2 lg:ml-200 md:ml-100 sm:ml-10">
-                <div class="flex justify-end">
-                    <div class="flex">
-                        <ul class="flex list-none space-x-10 lg:space-x-20">
-                            <li><a @click="toHome()"
-                                    class="text-xl text-white hover:text-neutral-600 duration-500 cursor-pointer">Home</a>
-                            </li>
-                            <li><button @click="toSignup()"
-                                    class="text-xl text-white hover:text-neutral-600 duration-500 cursor-pointer">Signup</button>
-                            </li>
-                            <li><a @click="toSignin()"
-                                    class="text-xl text-white hover:text-neutral-600 duration-500 cursor-pointer">Signin</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <!-- Menu -->
+            <ul class="flex flex-wrap list-none space-x-4 mb-4 sm:space-x-8 lg:space-x-20">
+                <li>
+                    <a @click="toHome()"
+                        class="text-lg sm:text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">Home</a>
+                </li>
+                <li>
+                    <button @click="toSignup()"
+                        class="text-lg sm:text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">Signup</button>
+                </li>
+                <li>
+                    <a @click="toSignin()"
+                        class="text-lg sm:text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">Login</a>
+                </li>
+            </ul>
         </nav>
     </header>
 
-    <div class="mt-30">
+    <div class="mt-10 sm:mt-20 p-5">
         <div class="flex justify-center">
-            <div class="p-10 bg-gray-100 shadow-xl rounded">
-                <div class="space-y-6 ">
+            <div class="w-full max-w-md p-6 sm:p-10 bg-gray-100 shadow-xl rounded">
+
+                <h1 class="text-2xl sm:text-3xl text-neutral-600 mb-6">Create an account</h1>
+
+                <div class="space-y-6">
+
+                    <!-- Name -->
                     <div>
-                        <h1 class="text-3xl text-neutral-600">Create an account</h1>
-                    </div>
-                    <div>
-                        <label for="name" class="text-gray-600 text-2xl">Name</label>
-                        <div class="mt-2">
-                            <input type="text" name="name" id="name" v-model="schema.name.$value"
-                                @focus="nameError = schema.name.$error.message" placeholder="Name"
-                                class="border border-neutral-800 rounded w-100 h-12 rounded pl-2 ">
-                        </div>
+                        <label for="name" class="text-gray-600 text-lg sm:text-2xl">Name</label>
+                        <input type="text" id="name" v-model="schema.name.$value"
+                            @focus="nameError = schema.name.$error.message" placeholder="Name"
+                            class="mt-2 border border-neutral-800 rounded w-full h-12 px-2">
                         <p v-if="schema.name.$error" class="text-red-500 mt-2">{{ nameError }}</p>
                     </div>
+
+                    <!-- Email -->
                     <div>
-                        <label for="email" class="text-gray-600 text-2xl">Email</label>
-                        <div class="mt-2">
-                            <input type="email" name="email" id="email" v-model="schema.email.$value"
-                                @focus="emailError = schema.email.$error.message" placeholder="Email"
-                                class="border border-neutral-800 rounded w-full h-12 p-2 rounded pl-2 ">
-                        </div>
+                        <label for="email" class="text-gray-600 text-lg sm:text-2xl">Email</label>
+                        <input type="email" id="email" v-model="schema.email.$value"
+                            @focus="emailError = schema.email.$error.message" placeholder="Email"
+                            class="mt-2 border border-neutral-800 rounded w-full h-12 px-2">
                         <p v-if="schema.email.$error" class="text-red-500 mt-2">{{ emailError }}</p>
                     </div>
+
+                    <!-- Password -->
                     <div>
-                        <label for="password" class="text-neutral-600 text-2xl">Password</label>
-                        <div class="mt-2">
-                            <input type="password" name="password" id="password" v-model="schema.password.$value"
-                                @focus="passwordError = schema.password.$error.message" placeholder="Password"
-                                class="border border-neutral-800 rounded w-full h-12 p-2 rounded pl-2 ">
-                        </div>
+                        <label for="password" class="text-neutral-600 text-lg sm:text-2xl">Password</label>
+                        <input type="password" id="password" v-model="schema.password.$value"
+                            @focus="passwordError = schema.password.$error.message" placeholder="Password"
+                            class="mt-2 border border-neutral-800 rounded w-full h-12 px-2">
                         <p v-if="schema.password.$error" class="text-red-500 mt-2">{{ passwordError }}</p>
                         <p v-else class="text-red-500 mt-2">{{ showPasswordError }}</p>
                     </div>
+
                 </div>
+
+                <!-- Bouton -->
                 <button @click.prevent="sendForm"
-                    class="mt-4 text-white text-xl px-10 py-2 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">Signup</button>
+                    class="mt-6 w-full text-white text-lg sm:text-xl py-3 bg-teal-700 hover:bg-teal-800 shadow-lg duration-500 cursor-pointer rounded">
+                    Signup
+                </button>
+
             </div>
         </div>
     </div>
+
 
     <p>{{ device }}</p>
     <p>{{ token }}</p>

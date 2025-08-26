@@ -1,30 +1,35 @@
 <template>
-    <header class="items-center w-full bg-teal-800 py-5 px-5">
-        <nav class="flex">
-            <div class="w-20">
-                <h1 class="text-xl text-cyan-200 font-semibold">R-Notes</h1>
+    <header class=" items-center w-full bg-teal-800 py-5 px-5">
+        <nav class="flex flex-wrap items-center justify-between">
+
+            <!-- Logo -->
+            <div class="w-auto">
+                <h1 class="text-lg sm:text-xl text-cyan-200 font-semibold">R-Notes</h1>
             </div>
 
-            <div class="flex pl-2 lg:ml-200 md:ml-100 sm:ml-10">
-                <div class="flex">
-                    <div class="flex">
-                        <ul class="flex list-none space-x-10 lg:space-x-20">
-                            <li><a @click="toCreateNote()"
-                                    class="text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">Create
-                                    note</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="flex lg:ml-150">
-                    <div class="flex">
-                        <a @click="logout()"
-                            class="text-white text-xl hover:text-neutral-500 duration-500 cursor-pointer">Log out</a>
-                    </div>
-                </div>
+            <!-- Liens -->
+            <div class="flex flex-wrap items-center gap-6 sm:gap-10 lg:gap-20  sm:mt-0">
+                <ul class="flex list-none gap-6 sm:gap-10 lg:gap-20">
+                    <li>
+                        <a @click="toCreateNote()"
+                            class="text-lg sm:text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">
+                            Create note
+                        </a>
+                    </li>
+                </ul>
+                <a @click="logout()"
+                    class="text-lg sm:text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">
+                    Log out
+                </a>
             </div>
+
         </nav>
     </header>
+
+
+
+
+
 
 
     <div class="max-w-200 mx-auto p-4">

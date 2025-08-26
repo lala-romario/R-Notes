@@ -1,31 +1,27 @@
 <template>
 
     <header class="items-center w-full bg-teal-800 py-5 px-5">
-        <nav class="flex">
-            <div class="w-20">
-                <h1 class="text-xl text-cyan-200 font-semibold">R-Notes</h1>
+        <nav class="flex flex-wrap items-center justify-between">
+
+            <!-- Logo -->
+            <div class="w-auto">
+                <h1 class="text-xl sm:text-2xl text-cyan-200 font-semibold">R-Notes</h1>
             </div>
 
-            <div class="flex pl-2 lg:ml-200 md:ml-100 sm:ml-10">
-                <div class="flex">
-                    <div class="flex">
-                        <a class="flex list-none space-x-10 lg:space-x-20">
-                            <p><a @click="toDashboard()"
-                                    class="text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">
-                                    Dashboard</a>
-                            </p>
-                        </a>
-                    </div>
-                </div>
-                <div class="lg:ml-140">
-                    <div class="">
-                        <a class="text-white text-xl items-center hover:text-neutral-500 duration-500 cursor-pointer">Log
-                            out</a>
-                    </div>
-                </div>
+            <!-- Liens -->
+            <div class="flex flex-wrap items-center space-x-6 sm:space-x-10 lg:space-x-20 mt-4 lg:mt-0">
+                <a @click="toDashboard()"
+                    class="text-lg sm:text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">
+                    Dashboard
+                </a>
+                <a class="text-lg sm:text-xl text-white hover:text-neutral-500 duration-500 cursor-pointer">
+                    Log out
+                </a>
             </div>
+
         </nav>
     </header>
+
 
     <div class="mb-10">
         <div class=" flex justify-center mt-15 ">
@@ -149,10 +145,10 @@ const handleChange = (event) => {
                 Authorization: `${localStorage.getItem('token')}`
             }
         })
-        .then(response => { 
+        .then(response => {
             code.value = response.data.code
-        
-            if(!(code.value === 200)){
+
+            if (!(code.value === 200)) {
                 router.push('/')
             }
         })
