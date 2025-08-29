@@ -37,19 +37,6 @@
     </div>
 
     <div class="flex justify-center align-center">
-
-        <button
-            class="mt-20 px-4 py-2 text-sm text-purple-600 font-semibold rounded-full border border-purple-200 bg-white transition-transform duration-300 ease-in-out hover:bg-purple-600 hover:border-transparent hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2">
-            <div class="text-animation">
-                <span>M</span>
-                <span>e</span>
-                <span>s</span>
-                <span>s</span>
-                <span>a</span>
-                <span>g</span>
-                <span>e</span>
-            </div>
-        </button>
     </div>
 
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
+use FFMpeg\FFMpeg;
+use FFMpeg\Format\Video\X264;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -41,9 +43,10 @@ class NotesController extends Controller
         if (! $user) {
             return [
                 'error' => 'you are not an user',
-                'code' => 402
+                'code' => 403
             ];
         }
+
         $rules = [
             'title' => 'required',
             'content' => 'required'
@@ -57,7 +60,21 @@ class NotesController extends Controller
 
         if ($request->hasFile('recordedVideo')) {
             $rules['video'] = 'mimes:webm|max:10248';
-            $path_video = $request->file('recordedVideo')->store('video', 'public');
+
+            $recordedVideo = $request->file('recordedVideo');
+            $videoOriginalName = pathinfo($recordedVideo->getClientOriginalName(), PATHINFO_FILENAME);
+
+            //convertion webm to mp4
+            $ffmpeg = FFMpeg::create([
+                'ffmpeg.binaries'  => '/usr/bin/ffmpeg',
+                'ffprobe.binaries' => '/usr/bin/ffprobe'
+            ]);
+            //
+            $video = $ffmpeg->open($recordedVideo);
+
+            $format = new X264('libmp3lame', 'libx264');
+
+            $video->save($format, storage_path("app/public/{$videoOriginalName}.mp4"));
         }
 
         $validated = $request->validate($rules);
@@ -68,7 +85,7 @@ class NotesController extends Controller
         }
 
         if ($request->hasFile('recordedVideo')) {
-            $validated['video'] = asset('storage/' . $path_video);
+            $validated['video'] = asset('storage/' . "/{$videoOriginalName}.mp4");
         }
 
         $validated['user_id'] = $user->id;
@@ -77,8 +94,28 @@ class NotesController extends Controller
 
         return [
             'success' => 'its work',
-            'filename' => new NoteResource($note),
+            'Note' => new NoteResource($note),
             'user' => $user,
+        ];
+    }
+
+    public function destroy(Request $request)
+    {
+        $userToken = $request->header('Authorization');
+
+        $user = DB::table('users')->where('token', $userToken)->first();
+
+        if (! $user) {
+            return [
+                'code' => 403
+            ];
+        }
+        $noteId = $request['noteId'];
+
+        Note::destroy($noteId);
+
+        return [
+            'code' => 200
         ];
     }
 }

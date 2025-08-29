@@ -37,7 +37,7 @@
                             <input type="email" name="email" id="email" v-model="schema.email.$value"
                                 @focus="emailError = schema.email.$error.message" placeholder="Email"
                                 class="border border-neutral-800 rounded w-full h-12 p-2 rounded pl-2 ">
-                        </div>>
+                        </div>
                         <p v-if="schema.email.$error" class="text-red-500 mt-2">{{ emailError }}</p>
                     </div>
                     <div>

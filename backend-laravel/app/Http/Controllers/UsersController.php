@@ -27,6 +27,5 @@ class UsersController extends Controller
             'message' => 'created with success',
             'data' => new UserResource($user)
         ];
-        
     }
 }
